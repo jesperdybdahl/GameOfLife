@@ -16,6 +16,13 @@ public class GameOfLifeDrawEventArgs : EventArgs
 	public bool Alive { get; set; }
 }
 
+public class GameOfLifeGenerationCompleteEventArgs : EventArgs
+{
+	public bool[,] Grid { get; set; }
+	public int Width { get; set; } = 0;
+	public int Height { get; set; } = 0;
+}
+
 public class GameOfLife
 {
 	public int Wait { get; set; } = 1000;
@@ -25,6 +32,7 @@ public class GameOfLife
     public bool[,] Grid { get; set; }
 
 	public event EventHandler<GameOfLifeDrawEventArgs> DrawCell;
+	public event EventHandler<GameOfLifeGenerationCompleteEventArgs> OnGenerationComplete;	
 
 	public GameOfLife(int width = 40, int height = 20)
 	{
@@ -105,17 +113,32 @@ public class GameOfLife
 		Grid = nextGen;
 	}
 
-	protected void Draw()
+	protected void GenerationComplete()
 	{
-		for (int y = 0; y < height; y++)
+		OnGenerationComplete?.Invoke(this, new GameOfLifeGenerationCompleteEventArgs
 		{
-			for (int x = 0; x < width; x++)
-			{
-                GameOfLifeDrawEventArgs args = new GameOfLifeDrawEventArgs { X = x, Y = y };
-				args.Alive = Grid[x,y];
+			Grid = this.Grid,
+			Width = this.width,
+			Height = this.height
+		});
+	}
 
-				DrawCell?.Invoke(this, args);
-            }
+    protected void Draw()
+	{
+		this.GenerationComplete();
+
+		if (DrawCell != null)
+		{
+			for (int y = 0; y < height; y++)
+			{
+				for (int x = 0; x < width; x++)
+				{
+					GameOfLifeDrawEventArgs args = new GameOfLifeDrawEventArgs { X = x, Y = y };
+					args.Alive = Grid[x, y];
+
+					DrawCell?.Invoke(this, args);
+				}
+			}
 		}
 	}
 

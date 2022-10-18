@@ -1,16 +1,32 @@
 ﻿// See https://aka.ms/new-console-template for more information
+using System.Net.Http.Headers;
+using System.Text;
+
 Console.WriteLine("Hello, World!");
 
-Console.SetWindowSize(160,50);
+Console.SetWindowSize(160,51);
 Console.Clear();
 
-GameOfLifeConsole.GameOfLife gol = new GameOfLifeConsole.GameOfLife(40,40);
-gol.DrawCell += Gol_DrawCell;
-gol.Wait = 500;
-gol.Run(100);
+GameOfLifeConsole.GameOfLife gol = new GameOfLifeConsole.GameOfLife(80,50);
+gol.OnGenerationComplete += Gol_OnGenerationComplete;
 
-void Gol_DrawCell(object? sender, GameOfLifeConsole.GameOfLifeDrawEventArgs e)
+gol.Wait = 100;
+gol.Run(1000);
+
+}
+
+void Gol_OnGenerationComplete(object? sender, GameOfLifeConsole.GameOfLifeGenerationCompleteEventArgs e)
 {
-    Console.SetCursorPosition(e.X*2, e.Y);
-    Console.Write(e.Alive ? "██" : "░░");
+    StringBuilder gridBuilder = new StringBuilder();
+
+    for (int y = 0; y < e.Height; y++)
+    {
+        for (int x = 0; x < e.Width; x++)
+        {
+            gridBuilder.Append(e.Grid[x, y] ? "██" : "░░");
+        }
+        gridBuilder.AppendLine();
+    }
+    Console.SetCursorPosition(0, 0);
+    Console.WriteLine(gridBuilder.ToString());
 }
