@@ -4,7 +4,7 @@ using System.Text;
 
 Console.WriteLine("Hello, World!");
 
-Console.SetWindowSize(160,51);
+Console.SetWindowSize(160,55);
 Console.Clear();
 
 GameOfLifeConsole.GameOfLife gol = new GameOfLifeConsole.GameOfLife(80,50);
@@ -13,7 +13,7 @@ gol.OnGenerationComplete += Gol_OnGenerationComplete;
 gol.Wait = 100;
 gol.Run(1000);
 
-}
+
 
 void Gol_OnGenerationComplete(object? sender, GameOfLifeConsole.GameOfLifeGenerationCompleteEventArgs e)
 {
